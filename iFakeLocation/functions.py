@@ -37,34 +37,55 @@ fuel_types_dict = {
 }
 
 def cheapestFuelAll():
+    fuel_info = {}
+
     # Just a quick way to get fuel prices from a website that is already created.
     # Thank you to master131 for this.
     r = requests.get(PRICE_URL, headers={"user-agent":USER_AGENT})
     response = json.loads(r.text)
 
     # E10
-    session['postcode0'] = response['regions'][0]['prices'][0]['postcode']
-    session['price0']    = response['regions'][0]['prices'][0]['price']
+    fuel_info['E10'] = {}
+    fuel_info['E10']['price']    = response['regions'][0]['prices'][0]['price']
+    fuel_info['E10']['suburb']   = response['regions'][0]['prices'][0]['suburb']
+    fuel_info['E10']['state']    = response['regions'][0]['prices'][0]['state']
+    fuel_info['E10']['postcode'] = response['regions'][0]['prices'][0]['postcode']
 
     # Unleaded 91
-    session['postcode1'] = response['regions'][0]['prices'][1]['postcode']
-    session['price1']    = response['regions'][0]['prices'][1]['price']
+    fuel_info['U91'] = {}
+    fuel_info['U91']['price']    = response['regions'][0]['prices'][1]['price']
+    fuel_info['U91']['suburb']   = response['regions'][0]['prices'][1]['suburb']
+    fuel_info['U91']['state']    = response['regions'][0]['prices'][1]['state']
+    fuel_info['U91']['postcode'] = response['regions'][0]['prices'][1]['postcode']
 
     # Unleaded 95
-    session['postcode2'] = response['regions'][0]['prices'][2]['postcode']
-    session['price2']    = response['regions'][0]['prices'][2]['price']
+    fuel_info['U95'] = {}
+    fuel_info['U95']['price']    = response['regions'][0]['prices'][2]['price']
+    fuel_info['U95']['suburb']   = response['regions'][0]['prices'][2]['suburb']
+    fuel_info['U95']['state']    = response['regions'][0]['prices'][2]['state']
+    fuel_info['U95']['postcode'] = response['regions'][0]['prices'][2]['postcode']
 
     # Unleaded 98
-    session['postcode3'] = response['regions'][0]['prices'][3]['postcode']
-    session['price3']    = response['regions'][0]['prices'][3]['price']
+    fuel_info['U98'] = {}
+    fuel_info['U98']['price']    = response['regions'][0]['prices'][3]['price']
+    fuel_info['U98']['suburb']   = response['regions'][0]['prices'][3]['suburb']
+    fuel_info['U98']['state']    = response['regions'][0]['prices'][3]['state']
+    fuel_info['U98']['postcode'] = response['regions'][0]['prices'][3]['postcode']
 
     # Diesel
-    session['postcode4'] = response['regions'][0]['prices'][4]['postcode']
-    session['price4']    = response['regions'][0]['prices'][4]['price']
+    fuel_info['Diesel'] = {}
+    fuel_info['Diesel']['price']    = response['regions'][0]['prices'][4]['price']
+    fuel_info['Diesel']['suburb']   = response['regions'][0]['prices'][4]['suburb']
+    fuel_info['Diesel']['state']    = response['regions'][0]['prices'][4]['state']
+    fuel_info['Diesel']['postcode'] = response['regions'][0]['prices'][4]['postcode']
 
     # LPG
-    session['postcode5'] = response['regions'][0]['prices'][5]['postcode']
-    session['price5']    = response['regions'][0]['prices'][5]['price']
+    fuel_info['LPG'] = {}
+    fuel_info['LPG']['price']    = response['regions'][0]['prices'][5]['price']
+    fuel_info['LPG']['suburb']   = response['regions'][0]['prices'][5]['suburb']
+    fuel_info['LPG']['state']    = response['regions'][0]['prices'][5]['state']
+    fuel_info['LPG']['postcode'] = response['regions'][0]['prices'][5]['postcode']
+    return fuel_info, response
 
 def cheapestFuel(fueltype):
     # Gets the cheapest fuel price for a certain type of fuel and the postcode
