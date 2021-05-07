@@ -119,4 +119,4 @@ def print_fuel_dict(fuels_dict):
 
 
 if __name__ == '__main__':
-    print("This should be run through app.py")
+    print("This should be run through an app")
