@@ -1,3 +1,4 @@
 .vs/
 iFakeLocation/bin/
 iFakeLocation/obj/
+*.pyc
