@@ -106,8 +106,16 @@ def cheapestFuelLocation(fueltype="U91", response=None):
     location = "%s %s %s" %(suburb, state, postcode)
     return location
 
-    # Remove all of our previous error messages
-    session.pop('ErrorMessage', None)
+def print_fuel_dict(fuels_dict):
+    style = "{:7} {:5} {:25} {:<6} {:<9}\r\n" #'Type', 'Price', 'Suburb', 'State', 'Postcode'
+    msg = style.format('Type', 'Price', 'Suburb', 'State', 'Postcode')
+    for f in fuels_dict:
+        msg += style.format(f,
+                            fuels_dict[f]['price'],
+                            fuels_dict[f]['suburb'],
+                            fuels_dict[f]['state'],
+                            fuels_dict[f]['postcode'])
+    return msg
 
 
 if __name__ == '__main__':
