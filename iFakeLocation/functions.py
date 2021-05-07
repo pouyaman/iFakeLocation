@@ -87,11 +87,16 @@ def cheapestFuelAll():
     fuel_info['LPG']['postcode'] = response['regions'][0]['prices'][5]['postcode']
     return fuel_info, response
 
-def cheapestFuel(fueltype):
+def cheapestFuelLocation(fueltype="U91", response=None):
     # Gets the cheapest fuel price for a certain type of fuel and the postcode
     # This is used for the automatic lock in
-    r = requests.get(PRICE_URL, headers={"user-agent":USER_AGENT})
-    response = json.loads(r.text)
+
+    assert fueltype in fuel_types_dict, "%s is not acceptable fuel type!" %fueltype
+    f = fuel_types_dict[fueltype]
+
+    if response is None:
+        r = requests.get(PRICE_URL, headers={"user-agent":USER_AGENT})
+        response = json.loads(r.text)
     '''
     52 = Unleaded 91
     53 = Diesel
@@ -114,14 +119,12 @@ def cheapestFuel(fueltype):
         fueltype = 0
 
     # Get the postcode and price
-    postcode  = response['regions'][0]['prices'][fueltype]['postcode']
-    price     = response['regions'][0]['prices'][fueltype]['price']
-    latitude  = response['regions'][0]['prices'][fueltype]['lat']
-    longitude = response['regions'][0]['prices'][fueltype]['lng']
-    return postcode, price, latitude, longitude
-
-def lockedPrices():
-    # This function is used for getting our locked in fuel prices to display on the main page
+    # price     = response['regions'][0]['prices'][f]['price']
+    suburb    = response['regions'][0]['prices'][f]['suburb']
+    state     = response['regions'][0]['prices'][f]['state']
+    postcode  = response['regions'][0]['prices'][f]['postcode']
+    location = "%s %s %s" %(suburb, state, postcode)
+    return location
 
     # Remove all of our previous error messages
     session.pop('ErrorMessage', None)
