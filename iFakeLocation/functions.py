@@ -149,7 +149,7 @@ if __name__ == '__main__':
         print(msg)
     # case for -l
     if args.cheapestFuelLocation is True:
-        loc = cheapestFuelLocation(args.fueltype, response=res)
+        loc, price = cheapestFuelLocation(args.fueltype, response=res)
         print(loc)
     # case for only fuel type
     if len(argv) == 2 and args.cheapestFuelAll is False and args.cheapestFuelLocation is False:
