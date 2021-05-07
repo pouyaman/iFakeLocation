@@ -1,4 +1,12 @@
 .vs/
 iFakeLocation/bin/
 iFakeLocation/obj/
+
+## python
 *.pyc
+iFakeLocation/__pycache__/
+# pyinstaller
+iFakeLocation/build/
+iFakeLocation/dist/
+iFakeLocation/*.spec
+
