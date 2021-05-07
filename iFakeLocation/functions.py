@@ -97,26 +97,6 @@ def cheapestFuelLocation(fueltype="U91", response=None):
     if response is None:
         r = requests.get(PRICE_URL, headers={"user-agent":USER_AGENT})
         response = json.loads(r.text)
-    '''
-    52 = Unleaded 91
-    53 = Diesel
-    54 = LPG
-    55 = Unleaded 95
-    56 = Unleaded 98
-    57 = E10
-    '''
-    if(fueltype == "52"):
-        fueltype = 1
-    if(fueltype == "53"):
-        fueltype = 4
-    if(fueltype == "54"):
-        fueltype = 5
-    if(fueltype == "55"):
-        fueltype = 2
-    if(fueltype == "56"):
-        fueltype = 3
-    if(fueltype == "57"):
-        fueltype = 0
 
     # Get the postcode and price
     # price     = response['regions'][0]['prices'][f]['price']
