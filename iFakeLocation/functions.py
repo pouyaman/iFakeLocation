@@ -18,13 +18,13 @@
 
 # Used for requests to the price check script and for 7-Eleven stores
 import requests, json
-# Functions used for getting the OS environments from settings.py
-import settings, os
 
-'''''''''''''''''''''''''''
-You can set or change any these environmental variables in settings.py
-'''''''''''''''''''''''''''
-PRICE_URL = os.getenv('PRICE_URL',settings.PRICE_URL)
+import argparse
+from sys import argv
+
+
+# PRICE_URL: 11-Seven Price API
+PRICE_URL="https://projectzerothree.info/api.php?format=json"
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:71.0) Gecko/20100101 Firefox/71.0"
 
 fuel_types_dict = {
@@ -35,6 +35,22 @@ fuel_types_dict = {
     'DSL': 4,
     'LPG': 5
 }
+
+### Parsing arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-a", "--cheapestFuelAll",
+                    action='store_true',
+                    help="Print cheapest price for all fuels")
+parser.add_argument("-l", "--cheapestFuelLocation",
+                    action='store_true',
+                    help="Print cheapest location of selected fuel")
+parser.add_argument("fueltype",
+                    nargs='?',
+                    default='U91',
+                    choices=list(fuel_types_dict),
+                    help="Fuel type to use, default U91")
+args = parser.parse_args()
+
 
 def cheapestFuelAll():
     fuel_info = {}
@@ -99,14 +115,14 @@ def cheapestFuelLocation(fueltype="U91", response=None):
         response = json.loads(r.text)
 
     # Get the postcode and price
-    # price     = response['regions'][0]['prices'][f]['price']
+    price     = response['regions'][0]['prices'][f]['price']
     suburb    = response['regions'][0]['prices'][f]['suburb']
     state     = response['regions'][0]['prices'][f]['state']
     postcode  = response['regions'][0]['prices'][f]['postcode']
     location = "%s %s %s" %(suburb, state, postcode)
-    return location
+    return location, price
 
-def print_fuel_dict(fuels_dict):
+def format_fuel_dict(fuels_dict):
     style = "{:7} {:5} {:25} {:<6} {:<9}\r\n" #'Type', 'Price', 'Suburb', 'State', 'Postcode'
     msg = style.format('Type', 'Price', 'Suburb', 'State', 'Postcode')
     for f in fuels_dict:
@@ -119,4 +135,24 @@ def print_fuel_dict(fuels_dict):
 
 
 if __name__ == '__main__':
-    print("This should be run through an app")
+    res  = None
+
+    # case for no arguments given
+    if len(argv) == 1:
+        fuel, res = cheapestFuelAll()
+        msg = format_fuel_dict(fuel)
+        print(msg)
+    # case for -a
+    if args.cheapestFuelAll is True:
+        fuel, res = cheapestFuelAll()
+        msg = format_fuel_dict(fuel)
+        print(msg)
+    # case for -l
+    if args.cheapestFuelLocation is True:
+        loc = cheapestFuelLocation(args.fueltype, response=res)
+        print(loc)
+    # case for only fuel type
+    if len(argv) == 2 and args.cheapestFuelAll is False and args.cheapestFuelLocation is False:
+        loc, price = cheapestFuelLocation(args.fueltype, response=res)
+        print(args.fueltype, price, loc)
+
