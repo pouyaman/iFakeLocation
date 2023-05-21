@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 	<head>
-		<title>iFakeLocation</title>
+		<title>iFakeLocation (11-Seven Edition)</title>
 		<script src="babel.polyfill.min.js"></script>
 		<script src="fetch.min.js"></script>
 		<script src="jquery-3.3.1.min.js"></script>
@@ -17,9 +17,9 @@
 	<body>
 		<div class="p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
 			<div class="d-flex flex-column align-items-center flex-md-row container">
-				<h4 class="my-0 mr-md-auto font-weight-normal">iFakeLocation</h4>
-				<a id="about-btn" class="btn btn-outline-primary pl-4 pr-4" href="#" title="iFakeLocation">About</a>
-				<a id="exit-btn" class="btn btn-outline-primary pl-4 pr-4 ml-4" href="#" title="iFakeLocation" onclick="window.open('', '_self', ''); window.close();">Exit</a>
+				<h4 class="my-0 mr-md-auto font-weight-normal">iFakeLocation (11-Seven Edition)</h4>
+				<a id="about-btn" class="btn btn-outline-primary pl-4 pr-4" href="#" title="iFakeLocation (11-Seven Edition)">About</a>
+				<a id="exit-btn" class="btn btn-outline-primary pl-4 pr-4 ml-4" href="#" title="iFakeLocation (11-Seven Edition)" onclick="window.open('', '_self', ''); window.close();">Exit</a>
 			</div>
 		</div>
 		<div class="container">
@@ -48,6 +48,19 @@
 						<div class="col-md-auto">
 							<label class="mb-0" for="device">Location Search:</label>
 						</div>
+						<div class="col-md-auto">
+							<select class="custom-select d-block" id="type" required>
+								<option>U91</option>
+								<option>U95</option>
+								<option>U98</option>
+								<option>E10</option>
+								<option>DSL</option>
+								<option>LPG</option>
+							</select>
+						</div>
+						<div class="col-md-auto">
+							<button type="button" class="btn btn-primary pl-4 pr-4" id="cheap">Cheapest</button>
+						</div>
 						<div class="col">
 							<input type="text" class="form-control" id="query">
 						</div>
@@ -68,12 +81,26 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="mb-3">
+				<div class="row align-items-center">
+					<div class="col">
+						<pre class="tab" id="fuel-price-list">
+Type    Price Suburb                    State  Postcode
+Not Loaded Yet!
+						</pre>
+					</div>
+					<div class="col">
+						<button type="button" class="btn btn-primary pl-4 pr-4 w-100" id="cheap-refresh"><br>Refresh Fuel Prices<br><br></button>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div id="messageModal" class="modal" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-dialog-centered" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">iFakeLocation</h5>
+						<h5 class="modal-title">iFakeLocation (11-Seven Edition)</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -103,7 +130,7 @@
 			<div class="modal-dialog modal-dialog-centered" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">About iFakeLocation</h5>
+						<h5 class="modal-title">About iFakeLocation (11-Seven Edition)</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -137,7 +164,8 @@
 			fetch('/version').then(function(e) {
 				return e.text()
 			}).then(function(v) {
-				$('#about').html('Author: master131<br>Version: ' + v +
+				$('#about').html('Author: master131, Forked by: Pouya M.<br>Version: ' + v +
+								'<br>Pricing thanks to: <a href="https://projectzerothree.info/" target="_blank">projectzerothree</a>' +
 								'<br><a href="https://github.com/master131/iFakeLocation/" target="_blank">View on Github</a>');
 			});
 			
@@ -355,6 +383,37 @@
 						map.setView([0, 0], 2);
 				});
 			});
+
+			// Handle cheapest fuel location
+			$('#cheap').click(function() {
+				i = $(type)[0].selectedIndex
+				msg = $(type)[0][i].text
+				fetch('/get_cheapest_fuel_location', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'text'
+					},
+					body: msg
+				}).then(function(e) {
+					return e.text()
+				}).then(function(c) {
+						$('#query').val(c);
+						document.getElementById('search').click();
+				});
+			});
+
+			// Handle cheapest fuel refresh
+			$('#cheap-refresh').click(function() {
+				fetch('/get_cheapest_fuel_all').then(function(e) {
+					return e.text()
+				}).then(function(c) {
+						$('#fuel-price-list')[0].innerText = c;
+				});
+			});
+
+			window.onload = function(){
+				document.getElementById('cheap-refresh').click();
+			}
 		</script>
 	</body>
 </html>

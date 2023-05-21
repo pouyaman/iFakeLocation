@@ -43,30 +43,32 @@ namespace iFakeLocation {
             httpListener = null;
             return false;
         }
-
-        static void OpenBrowser(string url) {
-            try {
+        static void OpenBrowser(string url)
+        {
+            try
+            {
                 Process.Start(url);
             }
-            catch {
-#if NETCOREAPP2_2
+            catch
+            {
                 // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
                     url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") {CreateNoWindow = true});
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
                 }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
                     Process.Start("xdg-open", url);
                 }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
                     Process.Start("open", url);
                 }
-                else {
-#endif
+                else
+                {
                     throw;
-#if NETCOREAPP2_2
                 }
-#endif
             }
         }
 
@@ -133,6 +135,67 @@ namespace iFakeLocation {
                     })
                 );
             }
+        }
+
+        [EndpointMethod("get_cheapest_fuel_location")]
+        static void GetCheapestFuelLocation(HttpListenerContext ctx) {
+            string fuel = "";
+            if (ctx.Request.Headers["Content-Type"] == "text") {
+                System.IO.Stream body = ctx.Request.InputStream;
+                System.Text.Encoding encoding = ctx.Request.ContentEncoding;
+                System.IO.StreamReader reader = new System.IO.StreamReader(body, encoding);
+                // Convert the data to a string
+                fuel = reader.ReadToEnd();
+            }
+            // Write cheapest fuel location
+            var proc = new Process 
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "Resources\\functions.exe",
+                    Arguments = "-l " + fuel,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            proc.Start();
+            string line = "";
+            while (!proc.StandardOutput.EndOfStream)
+            {
+                line = proc.StandardOutput.ReadLine();
+                // do something with line
+            }
+            string loc = line;
+            SetResponse(ctx, loc);
+        }
+
+        [EndpointMethod("get_cheapest_fuel_all")]
+        static void GetCheapestFuelAll(HttpListenerContext ctx) {
+            // Write cheapest fuel all
+            var proc = new Process 
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "Resources\\functions.exe",
+                    Arguments = "-a",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            proc.Start();
+            string lines = "";
+            while (!proc.StandardOutput.EndOfStream)
+            {
+                string line = proc.StandardOutput.ReadLine();
+                if(!String.IsNullOrEmpty(line))
+                {
+                    lines +=  line + "\r\n";
+                }
+            }
+            string loc = lines;
+            SetResponse(ctx, loc);
         }
 
         class DownloadState {
