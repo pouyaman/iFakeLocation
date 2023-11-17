@@ -6,7 +6,7 @@
     <!-- <TargetFrameworks>netcoreapp2.2;netcoreapp3.1;net5.0-windows</TargetFrameworks> -->
     <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>1.6</Version>
+    <Version>1.9</Version>
   <!-- </PropertyGroup> -->
 
   <!-- <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
@@ -33,7 +33,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Version>1.7</Version>
     <LangVersion>latest</LangVersion> -->
-  </PropertyGroup>
+  <!-- </PropertyGroup> -->
 
   <ItemGroup>
     <Content Include="Resources/**/*.*">
