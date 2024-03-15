@@ -131,7 +131,7 @@ namespace iFakeLocation {
                     HttpClient.DefaultRequestHeaders.Clear();
                     HttpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
                     var response =
-                        JObject.Parse(HttpClient.GetStringAsync("https://raw.githubusercontent.com/master131/iFakeLocation/master/updates.json").Result);
+                        JObject.Parse(HttpClient.GetStringAsync("https://raw.githubusercontent.com/pouyaman/iFakeLocation/master/updates.json").Result);
                     foreach (var kvp in response.SelectToken("images").ToObject<Dictionary<string, string>>())
                         VersionToImageUrlOverride.Add(kvp.Key, kvp.Value);
                 } catch {
